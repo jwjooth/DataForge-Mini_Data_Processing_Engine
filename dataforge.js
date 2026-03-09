@@ -1,0 +1,91 @@
+const RAW_PRODUCTS = [
+  {
+    id: "P001",
+    name: "  Mechanical Keyboard  ",
+    category: "Electronics",
+    price: "149.99",
+    stock: 30,
+    tags: ["gaming", "keyboard", "rgb"],
+  },
+  {
+    id: "P002",
+    name: "ergonomic mouse",
+    category: "Electronics",
+    price: "79.50",
+    stock: 0,
+    tags: ["mouse", "wireless", "ergonomic"],
+  },
+  {
+    id: "P003",
+    name: "STANDING DESK",
+    category: "Furniture",
+    price: "599.00",
+    stock: 5,
+    tags: ["desk", "adjustable", "ergonomic"],
+  },
+  {
+    id: "P004",
+    name: "usb-c hub",
+    category: "Electronics",
+    price: "not_a_price",
+    stock: 12,
+    tags: ["usb", "hub", "multiport"],
+  },
+  {
+    id: "P005",
+    name: "Noise Cancelling Headphones",
+    category: "Electronics",
+    price: "249.99",
+    stock: 18,
+    tags: ["audio", "wireless", "anc"],
+  },
+  {
+    id: "P006",
+    name: "laptop stand",
+    category: "Accessories",
+    price: "49.00",
+    stock: 50,
+    tags: ["stand", "ergonomic", "aluminum"],
+  },
+  {
+    id: "P007",
+    name: "webcam 4k",
+    category: "Electronics",
+    price: "129.00",
+    stock: 0,
+    tags: ["camera", "4k", "streaming"],
+  },
+  {
+    id: "P008",
+    name: "desk lamp",
+    category: "Accessories",
+    price: "35.00",
+    stock: 100,
+    tags: ["lighting", "led", "adjustable"],
+  },
+  {
+    id: "P009",
+    name: "MONITOR 27 INCH",
+    category: "Electronics",
+    price: "399.00",
+    stock: 8,
+    tags: ["monitor", "4k", "ips"],
+  },
+  {
+    id: "P010",
+    name: "cable organizer",
+    category: "Accessories",
+    price: "12.99",
+    stock: 200,
+    tags: ["cable", "organizer", "desk"],
+  },
+];
+
+// section 1
+const NumberUtils = {
+  parsePrice(value){
+    return Number.isNaN(value) ? Number(value) : 0;
+  }
+}
+
+Object.freeze(NumberUtils);
