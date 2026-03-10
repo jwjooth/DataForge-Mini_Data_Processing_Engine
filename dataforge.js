@@ -106,9 +106,8 @@ const NumberUtils = {
   },
 };
 
-Object.freeze(NumberUtils);
-
 // demo requirement
+console.info("== DEMO SECTION 1 ==");
 console.log(NumberUtils.parsePrice("149.99")); // 149.99
 console.log(NumberUtils.parsePrice("not_a_price")); // 0
 console.log(NumberUtils.isValidPrice(49.0)); // true
@@ -149,12 +148,13 @@ const StringUtils = {
   containsKeyword(str, keyword) {
     return str.toLowerCase().includes(keyword.toLowerCase()) ? true : false;
   },
-  extractId(str){
+  extractId(str) {
     return str.substring(1);
-  }
+  },
 };
 
 // demo requirement
+console.info("== DEMO SECTION 2 ==");
 console.log(StringUtils.normalize("  mechanical KEYBOARD  ")); // "Mechanical Keyboard"
 console.log(StringUtils.toSlug("Noise Cancelling Headphones")); // "noise-cancelling-headphones"
 console.log(StringUtils.truncate("Noise Cancelling Headphones", 10)); // "Noise Canc..."
@@ -163,8 +163,154 @@ console.log(StringUtils.containsKeyword("Ergonomic Mouse", "mouse")); // true
 console.log(StringUtils.extractId("P007")); // "007"
 
 // section 3
-function normalizeProducts(rawArray){
-  rawArray.forEach(element => {
-    console.log(element);
+function normalizeProducts(rawArray) {
+  rawArray.forEach((element) => {
+    console.log({
+      id: element.id,
+      name: StringUtils.normalize(element.name),
+      slug: StringUtils.toSlug(StringUtils.normalize(element.name)),
+      category: element.category,
+      price: NumberUtils.parsePrice(element.price),
+      stock: element.stock,
+      tags: element.tags,
+      valid: NumberUtils.isValidPrice(element.price),
+    });
   });
 }
+
+class ProductQueue {
+  data = [];
+  enqueue(product) {
+    this.data.push(product);
+  }
+  dequeue() {
+    return this.data.shift();
+  }
+  peek() {
+    return this.data[0];
+  }
+  size() {
+    return this.data.length;
+  }
+  isEmpty() {
+    return this.data.length === 0 ? true : false;
+  }
+}
+
+class UndoStack {
+  data = [];
+  push(action) {
+    this.data.push(action);
+  }
+  pop() {
+    return this.data.pop();
+  }
+  peek() {
+    return this.data[this.data.length];
+  }
+  size() {
+    return this.data.length;
+  }
+}
+
+function searchProducts(products, query) {
+  function find() {
+    return products.find(query.includes());
+  }
+  function findIndex() {
+    return products.findIndex(query);
+  }
+  function includes() {
+    return products.includes(query);
+  }
+  function indexOf() {
+    return products.indexOf(query);
+  }
+  function lastIndexOf() {
+    return products.lastIndexOf(query);
+  }
+  return (find, findIndex, includes, indexOf, lastIndexOf);
+}
+
+function filterProducts(products) {
+  let inStock = [];
+  let invalid = [];
+  products.forEach((value) => {
+    if (value.stock > 0) {
+      inStock.push(value);
+    } else {
+      invalid.push(value);
+    }
+  });
+}
+
+function transformProducts(products) {
+  function map() {}
+  function reduce() {}
+  function reduceRight() {}
+}
+
+// demo requirement
+console.info("== DEMO 3.1 ==");
+normalizeProducts(RAW_PRODUCTS);
+
+console.info("== DEMO 3.2 ==");
+const productQueue = new ProductQueue();
+productQueue.enqueue({
+  id: "P001",
+  name: "  Mechanical Keyboard  ",
+  category: "Electronics",
+  price: "149.99",
+  stock: 30,
+  tags: ["gaming", "keyboard", "rgb"],
+});
+productQueue.enqueue({
+  id: "P002",
+  name: "ergonomic mouse",
+  category: "Electronics",
+  price: "79.50",
+  stock: 0,
+  tags: ["mouse", "wireless", "ergonomic"],
+});
+productQueue.enqueue({
+  id: "P003",
+  name: "STANDING DESK",
+  category: "Furniture",
+  price: "599.00",
+  stock: 5,
+  tags: ["desk", "adjustable", "ergonomic"],
+});
+console.info(productQueue.data);
+console.info(productQueue.dequeue());
+console.log(productQueue.peek());
+console.log(productQueue.size());
+console.log(productQueue.isEmpty());
+
+console.info("== DEMO 3.3 ==");
+const undoStack = new UndoStack();
+
+// // section 4
+// Object.freeze(NumberUtils);
+// const PIPELINE_CONFIG = {
+//   version: "1.0.0",
+//   defaultLocale: "en-US",
+//   defaultCurrency: "USD",
+//   maxProductNameLength: 50,
+// };
+
+// Object.seal(PIPELINE_CONFIG);
+
+// // Demonstrate:
+// // You CAN modify an existing property (e.g., version)
+// // You CANNOT add a new property (e.g., debugMode)
+// // You CANNOT delete a property
+
+// function mergeProductUpdate(original, updates) {
+//   return Object.assign({}, original, updates);
+// }
+
+// function inspectObject(obj) {
+//   return Object.values(obj) + Object.getOwnPropertyNames(obj);
+// }
+
+// // Call it on PIPELINE_CONFIG in the demo.
