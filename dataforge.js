@@ -247,12 +247,51 @@ function filterProducts(products) {
 }
 
 function transformProducts(products) {
-  const { id, name, price } = products;
-
+  const formattedPrices = products.map((value) => {
+    return {
+      id: value.id,
+      name: value.name.trim(),
+      formattedPrice: NumberUtils.formatCurrency(value.price, "en-US", "USD"),
+    };
+  });
+  const totalInventoryValue = products.reduce((total, p) => {
+    const price = NumberUtils.parsePrice(p.price);
+    if (!NumberUtils.isValidPrice(price)) return total;
+    return total + price * p.stock;
+  }, 0);
+  const reversedProducts = products.reduceRight((acc, cur) => {
+    acc.push(StringUtils.normalize(cur.name));
+    return acc;
+  }, []);
   return {
-    id, name, price
+    formattedPrices,
+    totalInventoryValue,
+    reversedProducts,
   };
 }
+
+// section 4
+const PIPELINE_CONFIG = {
+  version: "1.0.0",
+  defaultLocale: "en-US",
+  defaultCurrency: "USD",
+  maxProductNameLength: 50,
+};
+
+// Demonstrate:
+// You CAN modify an existing property (e.g., version)
+// You CANNOT add a new property (e.g., debugMode)
+// You CANNOT delete a property
+
+function mergeProductUpdate(original, updates) {
+  return Object.assign({}, original, updates);
+}
+
+function inspectObject(obj) {
+  return Object.values(obj) + Object.getOwnPropertyNames(obj);
+}
+
+// Call it on PIPELINE_CONFIG in the demo.
 
 // demo requirement
 console.info("== DEMO 3.1 ==");
@@ -312,28 +351,18 @@ console.info("== DEMO 3.6 ==");
 const transformProduct = new transformProducts(RAW_PRODUCTS);
 console.log(transformProduct);
 
-// // section 4
-// Object.freeze(NumberUtils);
-// const PIPELINE_CONFIG = {
-//   version: "1.0.0",
-//   defaultLocale: "en-US",
-//   defaultCurrency: "USD",
-//   maxProductNameLength: 50,
-// };
+console.info("== DEMO 4.1 ==");
+const frozenMethods = Object.freeze(NumberUtils);
+frozenMethods.isValidPrice = () => "Halo";
+frozenMethods.newMethod = () => "Hai";
+console.log(frozenMethods.isValidPrice);
+console.log(frozenMethods.newMethod);
 
-// Object.seal(PIPELINE_CONFIG);
+console.info("== DEMO 4.2 ==");
+const sealMethods = Object.seal(PIPELINE_CONFIG);
+sealMethods.version = "this is new version";
+sealMethods.debugMode = () => "this is debugMode";
+delete sealMethods.defaultCurrency;
+console.info(sealMethods);
 
-// // Demonstrate:
-// // You CAN modify an existing property (e.g., version)
-// // You CANNOT add a new property (e.g., debugMode)
-// // You CANNOT delete a property
-
-// function mergeProductUpdate(original, updates) {
-//   return Object.assign({}, original, updates);
-// }
-
-// function inspectObject(obj) {
-//   return Object.values(obj) + Object.getOwnPropertyNames(obj);
-// }
-
-// // Call it on PIPELINE_CONFIG in the demo.
+console.info("== DEMO 4.3 ==");
