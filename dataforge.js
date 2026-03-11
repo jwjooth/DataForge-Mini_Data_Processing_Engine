@@ -206,7 +206,7 @@ class UndoStack {
     return this.data.pop();
   }
   peek() {
-    return this.data[this.data.length];
+    return this.data[this.data.length - 1];
   }
   size() {
     return this.data.length;
@@ -214,40 +214,44 @@ class UndoStack {
 }
 
 function searchProducts(products, query) {
-  function find() {
-    return products.find(query.includes());
-  }
-  function findIndex() {
-    return products.findIndex(query);
-  }
-  function includes() {
-    return products.includes(query);
-  }
-  function indexOf() {
-    return products.indexOf(query);
-  }
-  function lastIndexOf() {
-    return products.lastIndexOf(query);
-  }
-  return (find, findIndex, includes, indexOf, lastIndexOf);
+  let normalizeProducts = query.toLowerCase();
+  let foundProduct = products.find((product) =>
+    product.id.toLowerCase().includes(normalizeProducts),
+  );
+  let foundIndex = products.findIndex((product) =>
+    product.id.toLowerCase().includes(normalizeProducts),
+  );
+  let hasProduct = products.includes(foundProduct);
+  let index = products.indexOf(foundProduct);
+  let lastIndex = products.lastIndexOf(foundProduct);
+  return {
+    foundProduct,
+    foundIndex,
+    hasProduct,
+    index,
+    lastIndex,
+  };
 }
 
 function filterProducts(products) {
   let inStock = [];
   let invalid = [];
-  products.forEach((value) => {
-    if (value.stock > 0) {
-      inStock.push(value);
+  products.filter((product) => {
+    if (NumberUtils.isValidPrice(product.stock)) {
+      inStock.push(product);
     } else {
-      invalid.push(value);
+      invalid.push(product);
     }
   });
+  return { inStock, invalid };
 }
 
 function transformProducts(products) {
-  function map() {}
-  function reduce() {}
-  function reduceRight() {}
+  const { id, name, price } = products;
+
+  return {
+    id, name, price
+  };
 }
 
 // demo requirement
@@ -288,6 +292,25 @@ console.log(productQueue.isEmpty());
 
 console.info("== DEMO 3.3 ==");
 const undoStack = new UndoStack();
+undoStack.push("Dance");
+undoStack.push("Singing");
+undoStack.push("Gaming");
+console.log(undoStack.data);
+console.log(undoStack.pop());
+console.log(undoStack.peek());
+console.log(undoStack.size());
+
+console.info("== DEMO 3.4 ==");
+const searchProduct = new searchProducts(RAW_PRODUCTS, "P005");
+console.log(searchProduct);
+
+console.info("== DEMO 3.5 ==");
+const filterProduct = new filterProducts(RAW_PRODUCTS);
+console.log(filterProduct);
+
+console.info("== DEMO 3.6 ==");
+const transformProduct = new transformProducts(RAW_PRODUCTS);
+console.log(transformProduct);
 
 // // section 4
 // Object.freeze(NumberUtils);
