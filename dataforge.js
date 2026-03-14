@@ -164,8 +164,9 @@ console.log(StringUtils.extractId("P007")); // "007"
 
 // section 3
 function normalizeProducts(rawArray) {
+  data = [];
   rawArray.forEach((element) => {
-    console.log({
+    data.push({
       id: element.id,
       name: StringUtils.normalize(element.name),
       slug: StringUtils.toSlug(StringUtils.normalize(element.name)),
@@ -176,6 +177,7 @@ function normalizeProducts(rawArray) {
       valid: NumberUtils.isValidPrice(element.price),
     });
   });
+  return data;
 }
 
 class ProductQueue {
@@ -278,24 +280,78 @@ const PIPELINE_CONFIG = {
   maxProductNameLength: 50,
 };
 
-// Demonstrate:
-// You CAN modify an existing property (e.g., version)
-// You CANNOT add a new property (e.g., debugMode)
-// You CANNOT delete a property
-
 function mergeProductUpdate(original, updates) {
   return Object.assign({}, original, updates);
 }
 
 function inspectObject(obj) {
-  return Object.values(obj) + Object.getOwnPropertyNames(obj);
+  return (Object.values(obj), Object.getOwnPropertyNames(obj));
 }
 
-// Call it on PIPELINE_CONFIG in the demo.
+// section 5
+function exportToJSON(products) {
+  return JSON.stringify(products);
+}
+
+function importFromJSON(jsonString) {
+  return JSON.parse(jsonString);
+}
+
+// section 6
+function calculateBigInventory() {
+  const warehouseA = 9007199254740991n;
+  const warehouseB = 9007199254740991n;
+  return (
+    BigInt(warehouseA + warehouseB) + typeof BigInt(warehouseA + warehouseB)
+  );
+}
+
+// section 7
+function createTimestamp() {
+  const rightNow = new Date();
+  const speDate = new Date(2024, 0, 15);
+  const dateNow = new Date(Date.now());
+  const stringDate = Date.parse("2024-06-01T00:00:00.000Z");
+  return {
+    rightNow,
+    speDate,
+    dateNow,
+    stringDate,
+  };
+}
+
+function formatDate(date) {}
+
+function addDays(date, days) {}
+
+// section 8
+const StatEngine = {
+  average(numbers) {
+    Math.round();
+  },
+  clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  },
+  randomInt(min, max){
+
+  },
+  power(){
+
+  },
+  squareRoot(value){
+
+  },
+  absoluteValue(value){
+
+  },
+  priceStats(products){
+    
+  }
+};
 
 // demo requirement
 console.info("== DEMO 3.1 ==");
-normalizeProducts(RAW_PRODUCTS);
+console.log(normalizeProducts(RAW_PRODUCTS));
 
 console.info("== DEMO 3.2 ==");
 const productQueue = new ProductQueue();
@@ -366,3 +422,36 @@ delete sealMethods.defaultCurrency;
 console.info(sealMethods);
 
 console.info("== DEMO 4.3 ==");
+const mergeProduct = new mergeProductUpdate(
+  {
+    id: "P002",
+    name: "ergonomic mouse",
+    category: "Electronics",
+    price: "79.50",
+    stock: 0,
+    tags: ["mouse", "wireless", "ergonomic"],
+  },
+  {
+    id: "POO3",
+    name: "Premium Mouse",
+    stock: 1,
+  },
+);
+console.log(mergeProduct);
+
+console.info("== DEMO 4.4 ==");
+const inspectObjects = new inspectObject(PIPELINE_CONFIG);
+console.log(inspectObjects);
+
+console.info("== DEMO 5.1 ==");
+const normalizeProduct = normalizeProducts(RAW_PRODUCTS);
+const toJSON = exportToJSON(normalizeProduct);
+const toString = new importFromJSON(toJSON);
+console.log(toJSON);
+console.log(toString);
+
+console.info("== DEMO 6.1 ==");
+const calculateBigInventories = new calculateBigInventory();
+console.log(Number.MAX_SAFE_INTEGER);
+console.log(BigInt(Number.MAX_SAFE_INTEGER));
+console.log(typeof BigInt(Number.MAX_SAFE_INTEGER));
