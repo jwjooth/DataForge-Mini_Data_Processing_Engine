@@ -24,6 +24,7 @@ import { BooleanFlag } from "./section_9.js";
 import { buildProductMap } from "./section_10.js";
 import { extractUniqueTags } from "./section_11.js";
 import { TextProcessor } from "./section_14.js";
+import { encodePayload, decodePayload } from "./section_18.js";
 
 // demo requirement
 console.info("== DEMO SECTION 1 ==");
@@ -214,6 +215,19 @@ console.log(textProcessor.sanitizeName("usb-c hub!!"));
 console.log(textProcessor.parsePriceTokens("149.99 30 Electronics"));
 
 console.info("== DEMO 15 ==");
+
+console.info("== DEMO 18 ==");
+const payload = {
+  userId: "U123",
+  action: "view",
+  productId: "P001",
+  timestamp: Date.now(),
+};
+const encoded = encodePayload(payload);
+console.log("Encoded:", encoded); // e.g., "eyJ1c2VySWQiOiJVMTIz..."
+const decoded = decodePayload(encoded);
+console.log("Decoded:", decoded.userId); // "U123"
+console.log("Match:", decoded.productId === payload.productId); // true
 
 console.log("╔═══════════════════════════════════╗");
 console.log("║   DataForge Pipeline Complete ✅   ║");
