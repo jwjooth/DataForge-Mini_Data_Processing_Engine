@@ -1,4 +1,8 @@
-"use strict";
+console.log("╔═══════════════════════════════════╗");
+console.log("║      DataForge Engine v1.0        ║");
+console.log("╚═══════════════════════════════════╝");
+
+("use strict");
 import {
   normalizeProducts,
   ProductQueue,
@@ -17,6 +21,9 @@ import { createTimestamp, formatDate, addDays } from "./section_7.js";
 import { StatEngine } from "./section_8.js";
 import { PIPELINE_CONFIG } from "./raw_data.js";
 import { BooleanFlag } from "./section_9.js";
+import { buildProductMap } from "./section_10.js";
+import { extractUniqueTags } from "./section_11.js";
+import { TextProcessor } from "./section_14.js";
 
 // demo requirement
 console.info("== DEMO SECTION 1 ==");
@@ -176,3 +183,38 @@ console.log(boolFlag1);
 console.log(boolFlag2);
 console.log(boolFlag3);
 console.log(boolFlag4);
+
+console.info("== DEMO 10 ==");
+const buildProduct = new buildProductMap(RAW_PRODUCTS);
+console.log(buildProduct);
+console.log(buildProduct.get("P001"));
+console.log(buildProduct.has("P999"));
+console.log(buildProduct.size);
+console.log(buildProduct.delete("P010"));
+console.log(buildProduct.get("P006"));
+console.log(buildProduct.clear());
+console.log(buildProduct);
+
+console.info("== DEMO 11 ==");
+const extractUnique = new extractUniqueTags(RAW_PRODUCTS);
+console.log(extractUnique.has("ergonomic"));
+console.log(extractUnique.has("vr-headset"));
+console.log(extractUnique.size);
+console.log(extractUnique.delete("led"));
+console.log(extractUnique.has("ergonomic"));
+extractUnique.forEach((product) => {
+  console.log(product);
+});
+
+console.info("== DEMO 14 ==");
+const textProcessor = TextProcessor();
+console.log(textProcessor.findAllElectronics(RAW_PRODUCTS));
+console.log(textProcessor.findFirstPriceIndex("599.00"));
+console.log(textProcessor.sanitizeName("usb-c hub!!"));
+console.log(textProcessor.parsePriceTokens("149.99 30 Electronics"));
+
+console.info("== DEMO 15 ==");
+
+console.log("╔═══════════════════════════════════╗");
+console.log("║   DataForge Pipeline Complete ✅   ║");
+console.log("╚═══════════════════════════════════╝");
