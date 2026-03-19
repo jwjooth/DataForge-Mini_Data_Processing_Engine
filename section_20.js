@@ -25,6 +25,7 @@ import { buildProductMap } from "./section_10.js";
 import { extractUniqueTags } from "./section_11.js";
 import { TextProcessor } from "./section_14.js";
 import { encodePayload, decodePayload } from "./section_18.js";
+import { SYM_CREATED_AT, SYM_PIPELINE, SYM_PIPELINE_REF, SYM_SOURCE, SYM_VERSION } from "./section_12.js";
 
 // demo requirement
 console.info("== DEMO SECTION 1 ==");
@@ -207,6 +208,25 @@ extractUnique.forEach((product) => {
   console.log(product);
 });
 
+console.info("== DEMO 12 ==");
+const product = {
+  id: "P001",
+  name: "Mechanical Keyboard",
+  price: 149.99
+};
+
+product[SYM_CREATED_AT] = new Date().toISOString();
+product[SYM_SOURCE]     = "DataForge-v1";
+product[SYM_VERSION]    = "1.0.0";
+console.log("Object.keys:", Object.keys(product));
+console.log("Created At:", product[SYM_CREATED_AT]);
+console.log("Symbols:", Object.getOwnPropertySymbols(product));
+console.log(SYM_PIPELINE === SYM_PIPELINE_REF);
+console.log(Symbol("test") === Symbol("test"));
+
+console.info("== DEMO 13 ==");
+
+
 console.info("== DEMO 14 ==");
 const textProcessor = TextProcessor();
 console.log(textProcessor.findAllElectronics(RAW_PRODUCTS));
@@ -215,6 +235,10 @@ console.log(textProcessor.sanitizeName("usb-c hub!!"));
 console.log(textProcessor.parsePriceTokens("149.99 30 Electronics"));
 
 console.info("== DEMO 15 ==");
+
+console.info("== DEMO 16 ==");
+
+console.info("== DEMO 17 ==");
 
 console.info("== DEMO 18 ==");
 const payload = {
