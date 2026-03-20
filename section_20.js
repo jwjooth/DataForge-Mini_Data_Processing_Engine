@@ -11,6 +11,9 @@ import {
   filterProducts,
   transformProducts,
 } from "./section_3.js";
+import { Validator } from "./section_13.js";
+import { schemaHandler } from "./section_15.js";
+import { ReflectUtils } from "./section_16.js";
 import { RAW_PRODUCTS } from "./raw_data.js";
 import { NumberUtils } from "./section_1.js";
 import { StringUtils } from "./section_2.js";
@@ -25,7 +28,15 @@ import { buildProductMap } from "./section_10.js";
 import { extractUniqueTags } from "./section_11.js";
 import { TextProcessor } from "./section_14.js";
 import { encodePayload, decodePayload } from "./section_18.js";
-import { SYM_CREATED_AT, SYM_PIPELINE, SYM_PIPELINE_REF, SYM_SOURCE, SYM_VERSION } from "./section_12.js";
+import { buildApiUrl } from "./section_17.js";
+import {
+  SYM_CREATED_AT,
+  SYM_PIPELINE,
+  SYM_PIPELINE_REF,
+  SYM_SOURCE,
+  SYM_VERSION,
+} from "./section_12.js";
+import { runFormula } from "./section_19.js";
 
 // demo requirement
 console.info("== DEMO SECTION 1 ==");
@@ -212,12 +223,12 @@ console.info("== DEMO 12 ==");
 const product = {
   id: "P001",
   name: "Mechanical Keyboard",
-  price: 149.99
+  price: 149.99,
 };
 
 product[SYM_CREATED_AT] = new Date().toISOString();
-product[SYM_SOURCE]     = "DataForge-v1";
-product[SYM_VERSION]    = "1.0.0";
+product[SYM_SOURCE] = "DataForge-v1";
+product[SYM_VERSION] = "1.0.0";
 console.log("Object.keys:", Object.keys(product));
 console.log("Created At:", product[SYM_CREATED_AT]);
 console.log("Symbols:", Object.getOwnPropertySymbols(product));
@@ -225,7 +236,26 @@ console.log(SYM_PIPELINE === SYM_PIPELINE_REF);
 console.log(Symbol("test") === Symbol("test"));
 
 console.info("== DEMO 13 ==");
+console.log("=== Product ID ===");
+console.log(Validator.isValidProductId("P001")); // true
+console.log(Validator.isValidProductId("P1234")); // false
+console.log(Validator.isValidProductId("A001")); // false
 
+console.log("\n=== Email ===");
+console.log(Validator.isValidEmail("test@mail.com")); // true
+console.log(Validator.isValidEmail("bad@email")); // false
+
+console.log("\n=== Extract Numbers ===");
+console.log(Validator.extractNumbers("P001 costs $149.99 with 30 stock")); // ["001", "149", "99", "30"]
+
+console.log("\n=== Find Category ===");
+console.log(Validator.findCategory("Best electronics deals")); // Electronics
+console.log(Validator.findCategory("home furniture sale")); // furniture
+console.log(Validator.findCategory("no category")); // null
+
+console.log("\n=== Multiline ===");
+console.log(Validator.isMultiline("One line")); // false
+console.log(Validator.isMultiline("Line 1\nLine 2")); // true
 
 console.info("== DEMO 14 ==");
 const textProcessor = TextProcessor();
@@ -235,10 +265,61 @@ console.log(textProcessor.sanitizeName("usb-c hub!!"));
 console.log(textProcessor.parsePriceTokens("149.99 30 Electronics"));
 
 console.info("== DEMO 15 ==");
+const guarded = new Proxy(product, schemaHandler);
+
+// ✅ valid
+guarded.price = 299.99;
+guarded.stock = 5;
+
+// ❌ invalid
+try {
+  guarded.price = "cheap";
+} catch (e) {
+  console.error(e.message);
+}
+
+try {
+  guarded.stock = -5;
+} catch (e) {
+  console.error(e.message);
+}
+
+// GET existing
+console.log(guarded.name);
+
+// GET missing
+console.log(guarded.nonExistent);
 
 console.info("== DEMO 16 ==");
+product[SYM_CREATED_AT] = new Date().toISOString();
+product[SYM_VERSION] = "1.0";
+
+// get
+console.log(ReflectUtils.getProperty(product, "name"));
+
+// set
+ReflectUtils.setProperty(product, "price", 75);
+console.log(product.price);
+
+// has
+console.log(ReflectUtils.hasProperty(product, "price")); // true
+
+// delete
+ReflectUtils.deleteProperty(product, "price");
+console.log(product.price); // undefined
+
+// list keys (includes Symbols)
+console.log(ReflectUtils.listKeys(product));
 
 console.info("== DEMO 17 ==");
+const url = buildApiUrl("https://api.dataforge.io", "/products", {
+  query: "mechanical keyboard",
+  category: "Electronics & More",
+  page: 1,
+});
+
+console.log(url);
+// https://api.dataforge.io/products?query=mechanical%20keyboard&category=Electronics%20%26%20More&page=1
 
 console.info("== DEMO 18 ==");
 const payload = {
@@ -252,6 +333,12 @@ console.log("Encoded:", encoded); // e.g., "eyJ1c2VySWQiOiJVMTIz..."
 const decoded = decodePayload(encoded);
 console.log("Decoded:", decoded.userId); // "U123"
 console.log("Match:", decoded.productId === payload.productId); // true
+
+console.log("== DEMO 19 ==");
+const context = { price: 149.99, stock: 30, discount: 0.1 };
+console.log(runFormula("price * stock", context)); // 4499.7
+console.log(runFormula("price * (1 - discount)", context)); // 134.991
+console.log(runFormula("stock > 0 ? 'In Stock' : 'Out of Stock'", context)); // "In Stock"
 
 console.log("╔═══════════════════════════════════╗");
 console.log("║   DataForge Pipeline Complete ✅   ║");

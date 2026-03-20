@@ -1,19 +1,30 @@
-function SchemaProxy() {
-  let price;
-  let stock;
-  function set(price) {
-    if(price > 0){
+export const schemaHandler = {
+  get(target, prop) {
+    console.log(`[PROXY GET] property: ${String(prop)}`);
 
-    } else {
-      throw new TypeError();
+    if (prop in target) {
+      return target[prop];
     }
-  }
-  function get() {
-    if(undefined){
 
-    } else {
+    return "[MISSING]";
+  },
 
+  set(target, prop, value) {
+    console.log(`[PROXY SET] property: ${String(prop)} = ${value}`);
+
+    if (prop === "price") {
+      if (typeof value !== "number" || value <= 0) {
+        throw new TypeError("Price must be a positive number");
+      }
     }
+
+    if (prop === "stock") {
+      if (!Number.isInteger(value) || value < 0) {
+        throw new TypeError("Stock must be a non-negative integer");
+      }
+    }
+
+    target[prop] = value;
+    return true;
   }
-  return (price, stock, set, get);
-}
+};
